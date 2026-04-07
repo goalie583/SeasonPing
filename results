@@ -58,7 +58,7 @@ img{
 
 <script>
 
-const API_KEY = "PASTE_YOUR_TMDB_KEY_HERE";
+const API_KEY = "6eff43595961944125fe11743028dc62";
 
 async function searchShow(){
   let query = document.getElementById("searchBox").value;
