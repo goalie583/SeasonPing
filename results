@@ -6,42 +6,43 @@
 
 <style>
 body{
-font-family: Arial;
-background:#111827;
-color:white;
-text-align:center;
-padding:40px;
+  font-family: Arial;
+  background:#111827;
+  color:white;
+  text-align:center;
+  padding:40px;
 }
 
 input{
-padding:10px;
-font-size:16px;
-width:250px;
-border-radius:8px;
-border:none;
+  padding:10px;
+  font-size:16px;
+  width:250px;
+  border-radius:8px;
+  border:none;
 }
 
 button{
-padding:10px 15px;
-font-size:16px;
-border-radius:8px;
-border:none;
-background:#6366f1;
-color:white;
-cursor:pointer;
+  padding:10px 15px;
+  font-size:16px;
+  border-radius:8px;
+  border:none;
+  background:#6366f1;
+  color:white;
+  cursor:pointer;
 }
 
 .result{
-background:#1f2937;
-margin:10px auto;
-padding:15px;
-width:300px;
-border-radius:10px;
+  background:#1f2937;
+  margin:10px auto;
+  padding:15px;
+  width:300px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 img{
-width:120px;
-border-radius:8px;
+  width:120px;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -57,42 +58,55 @@ border-radius:8px;
 
 <script>
 
-const API_KEY = "6eff43595961944125fe11743028dc62";
+const API_KEY = "PASTE_YOUR_TMDB_KEY_HERE";
 
 async function searchShow(){
+  let query = document.getElementById("searchBox").value;
 
-let query = document.getElementById("searchBox").value;
+  let response = await fetch(
+    `https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&query=${query}`
+  );
 
-let response = await fetch(
-"https://api.themoviedb.org/3/search/tv?api_key="+API_KEY+"&query="+query
-);
+  let data = await response.json();
 
-let data = await response.json();
+  let results = document.getElementById("results");
+  results.innerHTML = "";
 
-let results = document.getElementById("results");
-results.innerHTML="";
+  data.results.slice(0,5).forEach(show => {
 
-data.results.slice(0,5).forEach(show=>{
+    let poster = "";
+    if(show.poster_path){
+      poster = `<img src="https://image.tmdb.org/t/p/w500${show.poster_path}">`;
+    }
 
-let poster="";
-if(show.poster_path){
-poster="<img src='https://image.tmdb.org/t/p/w500"+show.poster_path+"'>";
+    results.innerHTML += `
+      <div class="result" onclick="getDetails(${show.id})">
+        <h3>${show.name}</h3>
+        ${poster}
+        <p>${show.first_air_date || "No date"}</p>
+      </div>
+    `;
+  });
 }
 
-results.innerHTML += "<div class='result' onclick='getDetails("+show.id+")'><h3>"+show.name+"</h3>"+poster+"<p>"+(show.first_air_date||"No date")+"</p></div>";
-});
-}
-</script>
 async function getDetails(id){
   let response = await fetch(
-    "https://api.themoviedb.org/3/tv/"+id+"?api_key="+API_KEY
+    `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}`
   );
+
   let show = await response.json();
+
   let results = document.getElementById("results");
 
-  results.innerHTML =
-    "<h2>"+show.name+"</h2>" +
-    "<p>"+show.overview+"</p>" +
-    "<p>Seasons: "+show.number_of_seasons+"</p>";
+  results.innerHTML = `
+    <h2>${show.name}</h2>
+    <p>${show.overview}</p>
+    <p>Seasons: ${show.number_of_seasons}</p>
+    <button onclick="location.reload()">⬅ Back</button>
+  `;
 }
-}
+
+</script>
+
+</body>
+</html>
