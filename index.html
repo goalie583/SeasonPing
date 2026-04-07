@@ -79,8 +79,10 @@ if(show.poster_path){
 poster="<img src='https://image.tmdb.org/t/p/w500"+show.poster_path+"'>";
 }
 
-results.innerHTML +=
+results.innerHTML += "<div class='result' onclick='getDetails("+show.id+")'><h3>"+show.name+"</h3>"+poster+"<p>"+(show.first_air_date||"No date")+"</p></div>";
 "<div class='result'><h3>"+show.name+"</h3>"+poster+"<p>"+(show.first_air_date||"No date")+"</p></div>";
+
+  
 
 });
 
@@ -90,3 +92,15 @@ results.innerHTML +=
 
 </body>
 </html>
+async function getDetails(id){
+  let response = await fetch(
+    "https://api.themoviedb.org/3/tv/"+id+"?api_key="+API_KEY
+  );
+  let show = await response.json();
+  let results = document.getElementById("results");
+
+  results.innerHTML =
+    "<h2>"+show.name+"</h2>" +
+    "<p>"+show.overview+"</p>" +
+    "<p>Seasons: "+show.number_of_seasons+"</p>";
+}
